@@ -24,7 +24,7 @@ function EditToolbar() {
         store.closeCurrentList();
     }
     let editStatus = false;
-    if (store.isListNameEditActive) {
+    if (store.listNameActive) {
         editStatus = true;
     }
     return (

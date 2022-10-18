@@ -116,7 +116,6 @@ export const useGlobalStore = () => {
 
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
-
         // GET THE LIST
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
