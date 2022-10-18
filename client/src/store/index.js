@@ -37,6 +37,7 @@ export const useGlobalStore = () => {
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
     // HANDLE EVERY TYPE OF STATE CHANGE
     const storeReducer = (action) => {
+        console.log({ REDUCER: action })
         const { type, payload } = action;
         switch (type) {
             // LIST UPDATE OF ITS NAME
@@ -186,7 +187,7 @@ export const useGlobalStore = () => {
         }
         asyncSetCurrentList(id);
     }
-    store.getPlaylistSize = function() {
+    store.getPlaylistSize = function () {
         return store.currentList.songs.length;
     }
     store.undo = function () {
@@ -202,6 +203,24 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
             payload: null
         });
+    }
+
+    store.createNewList = async () => {
+        const playlists = await api.getAllPlaylists().then(res => res.data.data).catch(err => [])
+
+        const payload = {
+            name: `Untitled ${playlists.length}`,
+            songs: []
+        }
+
+        const res = await api.createPlaylist(payload)
+
+        storeReducer({
+            type: GlobalStoreActionType.CREATE_NEW_LIST,
+            payload: res.data.playlist
+        })
+
+        store.setCurrentList(res.data.playlist['_id'])
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT

@@ -6,11 +6,11 @@
     
         @author McKilla Gorilla
     */
-  --swatch-foundation: #eeeedd; 
-  --swatch-primary: #e6e6e6; 
+  --swatch-foundation: #eeeedd;
+  --swatch-primary: #e6e6e6;
   --swatch-complement: #e1e4cb;
-  --swatch-contrast: #111111; 
-  --swatch-accent: #669966; 
+  --swatch-contrast: #111111;
+  --swatch-accent: #669966;
   --swatch-status: #123456;
   --my-font-family: "Robaaaoto";
   --bounceEasing: cubic-bezier(0.51, 0.92, 0.24, 1.15);
@@ -26,7 +26,7 @@ body {
   position: absolute;
   width: 80%;
   left: 10%;
-  height:90%;
+  height: 90%;
   top: 5%;
 }
 
@@ -37,7 +37,7 @@ body {
   top: 0%;
   left: 0%;
   font-family: "Tangerine";
-  display:grid;
+  display: grid;
   grid-template-columns: 70% 30%;
   grid-template-rows: 10% 80% 10%;
 }
@@ -45,8 +45,8 @@ body {
 #playlister-banner {
   grid-column: 1 / 3;
   grid-row: 1 / 2;
-  background-image: linear-gradient(to bottom,         
-  #b8b808, #636723);
+  background-image: linear-gradient(to bottom,
+      #b8b808, #636723);
   color: white;
   font-size: 48pt;
   border-color: black;
@@ -59,21 +59,23 @@ body {
   grid-column: 2 / 3;
   grid-row: 1 / 2;
   background-color: transparent;
-  float:right;
+  float: right;
 }
 
-#playlist-selector, #playlist-cards {
+#playlist-selector,
+#playlist-cards {
   overflow: scroll;
   grid-column: 1 / 3;
   grid-row: 2 / 3;
-  display:grid;
+  display: grid;
   background-color: var(--swatch-primary);
 }
 
-.playlister-button, .playlister-button-disabled {
-  font-size:36pt;
+.playlister-button,
+.playlister-button-disabled {
+  font-size: 36pt;
   border-width: 0px;
-  float:left;
+  float: left;
   color: black;
   cursor: pointer;
   opacity: 100%;
@@ -81,12 +83,18 @@ body {
 
 .playlister-button:hover {
   cursor: pointer;
-  color:black;
+  color: black;
 }
 
 .playlister-button-disabled {
-  opacity: 0.25; 
+  opacity: 0.25;
   cursor: not-allowed;
+}
+
+#playlist-selector-heading {
+  font-size: 3vmin;
+  height: 7vmin;
+  line-height: 8vmin;
 }
 
 #playlister-statusbar {
@@ -96,24 +104,29 @@ body {
   width: 100%;
   height: 10%;
   background-color: lightsalmon;
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   font-size: 36pt;
 }
 
 #add-list-button {
-  float:left;
+  float: left;
+  margin: 1vmin 2vmin;
+  font-size: 5vmin;
 }
 
-.list-card, .selected-list-card, .unselected-list-card {
+.list-card,
+.selected-list-card,
+.unselected-list-card {
   font-size: 18pt;
   margin: 10px;
   padding: 20px;
   border-radius: 25px;
 }
 
-.list-card:aria-disabled,.list-card[aria-disabled] {
+.list-card:aria-disabled,
+.list-card[aria-disabled] {
   border: 1px solid #999999;
   background-color: #cccccc;
   color: #666666;
@@ -123,7 +136,7 @@ body {
 .unselected-list-card:hover {
   cursor: pointer;
   background-color: var(--swatch-contrast);
-  color:white;
+  color: white;
 }
 
 .selected-list-card {
@@ -136,12 +149,12 @@ body {
 }
 
 .list-card-button {
-  float:right;
-  font-size:18pt;
+  float: right;
+  font-size: 18pt;
 }
 
 input {
-  font-size:20pt;
+  font-size: 20pt;
 }
 
 .disabled {
@@ -190,7 +203,7 @@ input {
   border-style: groove;
 }
 
-.modal-dialog > * {
+.modal-dialog>* {
   padding: 1rem;
 }
 
@@ -211,7 +224,7 @@ input {
   font-size: 1.5rem;
 }
 
-.modal p + p {
+.modal p+p {
   margin-top: 1rem;
 }
 
@@ -225,11 +238,11 @@ input {
 }
 
 #close-modal-button {
-  float:right;
+  float: right;
 }
 
 #confirm-cancel-container {
-  text-align:center;
+  text-align: center;
 }
 
 /* ANIMATIONS
