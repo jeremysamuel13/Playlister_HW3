@@ -10,8 +10,8 @@ import { GlobalStoreContext } from '../store'
 */
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
-    const [ editActive, setEditActive ] = useState(false);
-    const [ text, setText ] = useState("");
+    const [editActive, setEditActive] = useState(false);
+    const [text, setText] = useState("");
     store.history = useHistory();
     const { idNamePair, selected } = props;
 
@@ -24,6 +24,12 @@ function ListCard(props) {
             // CHANGE THE CURRENT LIST
             store.setCurrentList(_id);
         }
+    }
+
+    function toggleDeleteModal(e) {
+        e.stopPropagation();
+        console.log({ TOGGLE: idNamePair })
+        store.markListForDeletion(idNamePair)
     }
 
     function handleToggleEdit(event) {
@@ -47,7 +53,7 @@ function ListCard(props) {
         }
     }
     function handleUpdateText(event) {
-        setText(event.target.value );
+        setText(event.target.value);
     }
 
     let selectClass = "unselected-list-card";
@@ -76,6 +82,7 @@ function ListCard(props) {
                 id={"delete-list-" + idNamePair._id}
                 className="list-card-button"
                 value={"\u2715"}
+                onClick={toggleDeleteModal}
             />
             <input
                 disabled={cardStatus}

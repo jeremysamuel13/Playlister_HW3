@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import ListCard from './ListCard.js'
 import { GlobalStoreContext } from '../store'
+import DeleteListModal from './modal/DeleteListModal.js'
 /*
     This React component lists all the playlists in the UI.
     
@@ -29,20 +30,25 @@ const ListSelector = () => {
         ))
     }
     return (
-        <div id="playlist-selector">
-            <div id="playlist-selector-heading">
-                <input
-                    type="button"
-                    id="add-list-button"
-                    onClick={handleCreateNewList}
-                    className="playlister-button"
-                    value="+" />
-                Your Lists
+        <>
+            <div id="playlist-selector">
+                <div id="playlist-selector-heading">
+                    <input
+                        type="button"
+                        id="add-list-button"
+                        onClick={handleCreateNewList}
+                        className="playlister-button"
+                        value="+" />
+                    Your Lists
+                </div>
+                <div id="list-selector-list">
+                    {listCard}
+                </div>
             </div>
-            <div id="list-selector-list">
-                {listCard}
-            </div>
-        </div>)
+            <DeleteListModal isVisible={!!store.deleteList} deleteListCallback={(id) => store.deletePlaylist(id)} hideDeleteListModalCallback={() => store.unmarkListForDeletion()} />
+        </>
+
+    )
 }
 
 export default ListSelector;
