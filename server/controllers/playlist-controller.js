@@ -153,7 +153,46 @@ removeSongFromPlaylistById = (req, res) => {
             return res.status(200).json({ success: true, playlist })
         }
     })
+}
 
+moveSong = async (req, res) => {
+    const { playlistID } = req.params;
+    const { from, to } = req.query
+
+    const list = await Playlist.findById(playlistID)
+
+    if (!list) {
+        return res.status(400).json({ success: false, error: 'Playlist not found' })
+    }
+
+    if (!from || !to) {
+        return res.status(400).json({ success: false, error: 'Invalid indices' })
+
+    }
+
+    let start = parseInt(from, 10)
+    let end = parseInt(to, 10)
+
+    console.log(req.query)
+
+    start -= 1;
+    end -= 1;
+    if (start < end) {
+        let temp = list.songs[start];
+        for (let i = start; i < end; i++) {
+            list.songs[i] = list.songs[i + 1];
+        }
+        list.songs[end] = temp;
+    }
+    else if (start > end) {
+        let temp = list.songs[start];
+        for (let i = start; i > end; i--) {
+            list.songs[i] = list.songs[i - 1];
+        }
+        list.songs[end] = temp;
+    }
+
+    await list.save()
 }
 
 module.exports = {
@@ -164,5 +203,6 @@ module.exports = {
     deletePlaylist,
     updatePlaylistById,
     addSongToPlaylistById,
-    removeSongFromPlaylistById
+    removeSongFromPlaylistById,
+    moveSong
 }

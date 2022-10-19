@@ -22,4 +22,6 @@ router.post(`/playlist/:id`, PlaylistController.addSongToPlaylistById)
 
 router.delete(`/playlist/:playlistID/:songID`, PlaylistController.removeSongFromPlaylistById)
 
+router.post(`/playlist/:playlistID/moveSong`, PlaylistController.moveSong)
+
 module.exports = router

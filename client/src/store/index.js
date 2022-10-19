@@ -265,6 +265,11 @@ export const useGlobalStore = () => {
         return res.data
     }
 
+    store.moveSong = async (oldIndex, newIndex) => {
+        const res = await api.moveSong(store.currentList._id, oldIndex, newIndex)
+        store.setCurrentList(store.currentList._id)
+    }
+
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };
 }
