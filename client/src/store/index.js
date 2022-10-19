@@ -217,9 +217,11 @@ export const useGlobalStore = () => {
         return store.currentList.songs.length;
     }
     store.undo = function () {
+        //undo
         tps.undoTransaction();
     }
     store.redo = function () {
+        //redo
         tps.doTransaction();
     }
 
