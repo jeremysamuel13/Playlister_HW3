@@ -158,7 +158,9 @@ input {
 }
 
 .disabled {
-  background-color: lightgray;
+  background-color: transparent;
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .disabled:hover {
