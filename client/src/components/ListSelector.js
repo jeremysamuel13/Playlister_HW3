@@ -34,6 +34,7 @@ const ListSelector = () => {
             <div id="playlist-selector">
                 <div id="playlist-selector-heading">
                     <input
+                        disabled={store.deleteList}
                         type="button"
                         id="add-list-button"
                         onClick={handleCreateNewList}

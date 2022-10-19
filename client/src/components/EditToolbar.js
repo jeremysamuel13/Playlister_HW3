@@ -18,7 +18,21 @@ function EditToolbar() {
     const { store } = useContext(GlobalStoreContext);
     const history = useHistory();
 
-    let enabledButtonClass = "playlister-button";
+    const modalOpen = store.songToDelete || store.songToEdit
+
+    const canAddSong = !modalOpen && store.currentList !== null
+    const canUndo = !modalOpen && store.hasUndo
+    const canRedo = !modalOpen && store.hasRedo
+    const canClose = !modalOpen && store.currentList !== null;
+
+    let addSongClass = "playlister-button";
+    let undoClass = "playlister-button";
+    let redoClass = "playlister-button";
+    let closeClass = "playlister-button";
+    if (!canAddSong) addSongClass += " disabled";
+    if (!canUndo) undoClass += " disabled";
+    if (!canRedo) redoClass += " disabled";
+    if (!canClose) closeClass += " disabled";
 
     function handleUndo() {
         store.undo();
@@ -45,33 +59,33 @@ function EditToolbar() {
             <input
                 type="button"
                 id='add-song-button'
-                disabled={editStatus}
+                disabled={!canAddSong}
                 value="+"
-                className={enabledButtonClass}
+                className={addSongClass}
                 onClick={handleAdd}
             />
             <input
                 type="button"
                 id='undo-button'
-                disabled={editStatus}
+                disabled={!canUndo}
                 value="⟲"
-                className={enabledButtonClass}
+                className={undoClass}
                 onClick={handleUndo}
             />
             <input
                 type="button"
                 id='redo-button'
-                disabled={editStatus}
+                disabled={!canRedo}
                 value="⟳"
-                className={enabledButtonClass}
+                className={redoClass}
                 onClick={handleRedo}
             />
             <input
                 type="button"
                 id='close-button'
-                disabled={editStatus}
+                disabled={!canClose}
                 value="&#x2715;"
-                className={enabledButtonClass}
+                className={closeClass}
                 onClick={handleClose}
             />
         </span>);

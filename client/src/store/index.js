@@ -36,6 +36,8 @@ export const useGlobalStore = () => {
         newListCounter: 0,
         listNameActive: false,
         deleteList: null,
+        hasRedo: false,
+        hasUndo: false
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -218,15 +220,19 @@ export const useGlobalStore = () => {
     }
     store.undo = function () {
         //undo
-        tps.undoTransaction();
+        tps.undoTransaction(store.updateStackState);
     }
     store.redo = function () {
         //redo
-        tps.doTransaction();
+        tps.doTransaction(store.updateStackState);
     }
 
     store.addTransaction = function (transaction) {
-        tps.addTransaction(transaction)
+        tps.addTransaction(transaction, store.updateStackState)
+    }
+
+    store.updateStackState = function () {
+        setStore({ ...store, hasRedo: tps.hasTransactionToRedo(), undo: tps.hasTransactionToUndo() })
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME

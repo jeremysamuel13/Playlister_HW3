@@ -15,7 +15,7 @@ export class jsTPS_Transaction {
     doTransaction() {
         console.log("doTransaction - MISSING IMPLEMENTATION");
     }
-    
+
     /**
      * This method is called by jTPS when a transaction is undone.
      */
@@ -110,7 +110,7 @@ export default class jsTPS {
      * there are transactions on the stack that can be redone.
      */
     hasTransactionToRedo() {
-        return (this.mostRecentTransaction+1) < this.numTransactions;
+        return (this.mostRecentTransaction + 1) < this.numTransactions;
     }
 
     /**
@@ -131,24 +131,24 @@ export default class jsTPS {
      * 
      * @param {jsTPS_Transaction} transaction Transaction to add to the stack and do.
      */
-    addTransaction(transaction) {
+    addTransaction(transaction, callback) {
         // ARE WE BRANCHING?
-        if ((this.mostRecentTransaction < 0) 
+        if ((this.mostRecentTransaction < 0)
             || (this.mostRecentTransaction < (this.transactions.length - 1))) {
-                for (let i = this.transactions.length - 1; i > this.mostRecentTransaction; i--) {
-                    this.transactions.splice(i, 1);
-                }
-                this.numTransactions = this.mostRecentTransaction + 2;
+            for (let i = this.transactions.length - 1; i > this.mostRecentTransaction; i--) {
+                this.transactions.splice(i, 1);
+            }
+            this.numTransactions = this.mostRecentTransaction + 2;
         }
         else {
             this.numTransactions++;
         }
 
         // ADD THE TRANSACTION
-        this.transactions[this.mostRecentTransaction+1] = transaction;
+        this.transactions[this.mostRecentTransaction + 1] = transaction;
 
         // AND EXECUTE IT
-        this.doTransaction();
+        this.doTransaction(callback);
     }
 
     /**
@@ -158,21 +158,23 @@ export default class jsTPS {
      * counter. Note this function may be invoked as a result of either adding
      * a transaction (which also does it), or redoing a transaction.
      */
-    doTransaction() {
+    doTransaction(callback) {
         if (this.hasTransactionToRedo()) {
             this.performingDo = true;
-            let transaction = this.transactions[this.mostRecentTransaction+1];
+            let transaction = this.transactions[this.mostRecentTransaction + 1];
             transaction.doTransaction();
             this.mostRecentTransaction++;
             this.performingDo = false;
         }
+        callback()
+
     }
 
     /**
      * This function gets the most recently executed transaction on the 
      * TPS stack and undoes it, moving the TPS counter accordingly.
      */
-    undoTransaction() {
+    undoTransaction(callback) {
         if (this.hasTransactionToUndo()) {
             this.performingUndo = true;
             let transaction = this.transactions[this.mostRecentTransaction];
@@ -180,6 +182,9 @@ export default class jsTPS {
             this.mostRecentTransaction--;
             this.performingUndo = false;
         }
+
+        callback()
+
     }
 
     /**
@@ -190,11 +195,11 @@ export default class jsTPS {
     clearAllTransactions() {
         // REMOVE ALL THE TRANSACTIONS
         this.transactions = [];
-        
+
         // MAKE SURE TO RESET THE LOCATION OF THE
         // TOP OF THE TPS STACK TOO
-        this.mostRecentTransaction = -1;      
-        this.numTransactions = 0; 
+        this.mostRecentTransaction = -1;
+        this.numTransactions = 0;
     }
 
     /**
@@ -202,7 +207,7 @@ export default class jsTPS {
      * 
      * Builds and returns a textual represention of the full TPS and its stack.
      */
-    toString() {        
+    toString() {
         let text = "--Number of Transactions: " + this.numTransactions + "\n";
         text += "--Current Index on Stack: " + this.mostRecentTransaction + "\n";
         text += "--Current Transaction Stack:\n";
@@ -210,6 +215,6 @@ export default class jsTPS {
             let jT = this.transactions[i];
             text += "----" + jT.toString() + "\n";
         }
-        return text;        
+        return text;
     }
 }
