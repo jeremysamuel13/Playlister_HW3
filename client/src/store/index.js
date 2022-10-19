@@ -323,6 +323,7 @@ export const useGlobalStore = () => {
     }
 
     store.editSong = async (id, song) => {
+        //saved to db
         const res = await api.editSongById(store.currentList._id, id, song)
         store.unmarkSongForEditing()
         store.setCurrentList(store.currentList._id)
