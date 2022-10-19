@@ -6,11 +6,11 @@ export default class RemoveSong_Transaction extends jsTPS_Transaction {
         this.id = id
     }
 
-    doTransaction() {
-        this.song = this.store.removeSongById(this.id)
+    async doTransaction() {
+        this.song = await this.store.removeSongById(this.id)
     }
 
-    undoTransaction() {
-        this.store.addSong(this.song)
+    async undoTransaction() {
+        this.id = await this.store.addSong(this.song)
     }
 }

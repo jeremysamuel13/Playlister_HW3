@@ -1,4 +1,5 @@
 const Playlist = require('../models/playlist-model')
+const mongoose = require('mongoose')
 /*
     This is our back-end API. It provides all the data services
     our database needs. Note that this file contains the controller
@@ -127,30 +128,35 @@ addSongToPlaylistById = (req, res) => {
         })
     }
 
+    const songId = new mongoose.Types.ObjectId()
+
     Playlist.findByIdAndUpdate(id, {
         $push: {
             songs: {
-                artist: body.artist, title: body.title, youTubeId: body.youTubeId
+                _id: songId, artist: body.artist, title: body.title, youTubeId: body.youTubeId
             }
         }
     }, (err, playlist) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         } else {
-            return res.status(200).json({ success: true, playlist })
+            return res.status(200).json({ success: true, playlist, _id: songId })
         }
     })
 }
 
-removeSongFromPlaylistById = (req, res) => {
+removeSongFromPlaylistById = async (req, res) => {
     const { playlistID, songID } = req.params;
     console.log(req.params)
+
+    const playlist = await Playlist.findById(playlistID)
+    const song = playlist.songs.find(el => el._id.toString() === songID)
 
     Playlist.findByIdAndUpdate(playlistID, { $pull: { songs: { _id: songID } } }, (err, playlist) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         } else {
-            return res.status(200).json({ success: true, playlist })
+            return res.status(200).json({ success: true, playlist, song })
         }
     })
 }
@@ -173,26 +179,52 @@ moveSong = async (req, res) => {
     let start = parseInt(from, 10)
     let end = parseInt(to, 10)
 
-    console.log(req.query)
+    console.log(list.songs)
 
-    start -= 1;
-    end -= 1;
     if (start < end) {
         let temp = list.songs[start];
         for (let i = start; i < end; i++) {
-            list.songs[i] = list.songs[i + 1];
+            list.songs.set(i, list.songs[i + 1])
         }
-        list.songs[end] = temp;
+        list.songs.set(end, temp);
     }
     else if (start > end) {
         let temp = list.songs[start];
         for (let i = start; i > end; i--) {
-            list.songs[i] = list.songs[i - 1];
+            list.songs.set(i, list.songs[i - 1]);
         }
-        list.songs[end] = temp;
+        list.songs.set(end, temp);
     }
 
+    console.log(list.songs)
+
     await list.save()
+
+    return res.status(200).json({ success: true, playlist: list })
+}
+
+editSongById = async (req, res) => {
+    const { body, params: { playlistID, songID } } = req
+
+    const playlist = await Playlist.findById(playlistID)
+
+
+    if (!playlist) {
+        return res.status(400).json({ success: false, error: 'Playlist not found' })
+    }
+
+    const idx = playlist.songs.findIndex(el => el._id.toString() === songID)
+
+    console.log({ idx, body, songID })
+
+    playlist.songs[idx] = { _id: playlist.songs[idx]._id, ...body }
+
+    console.log(playlist)
+
+    await playlist.save()
+
+    return res.status(200).json({ success: true, playlist })
+
 }
 
 module.exports = {
@@ -204,5 +236,6 @@ module.exports = {
     updatePlaylistById,
     addSongToPlaylistById,
     removeSongFromPlaylistById,
-    moveSong
+    moveSong,
+    editSongById
 }

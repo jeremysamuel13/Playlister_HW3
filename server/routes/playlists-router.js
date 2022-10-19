@@ -21,6 +21,7 @@ router.put('/playlist/:id', PlaylistController.updatePlaylistById)
 router.post(`/playlist/:id`, PlaylistController.addSongToPlaylistById)
 
 router.delete(`/playlist/:playlistID/:songID`, PlaylistController.removeSongFromPlaylistById)
+router.put(`/playlist/:playlistID/:songID`, PlaylistController.editSongById)
 
 router.post(`/playlist/:playlistID/moveSong`, PlaylistController.moveSong)
 

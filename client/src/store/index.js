@@ -18,7 +18,9 @@ export const GlobalStoreActionType = {
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
-    MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION"
+    MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
+    MARK_SONG_FOR_EDITING: "MARK_SONG_FOR_EDITING",
+    MARK_SONG_FOR_DELETION: "MARK_SONG_FOR_DELETION"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -105,6 +107,24 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: true
                 });
+            }
+            case GlobalStoreActionType.MARK_SONG_FOR_EDITING: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    songToEdit: payload
+                })
+            }
+            case GlobalStoreActionType.MARK_SONG_FOR_DELETION: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    songToDelete: payload
+                })
             }
             default:
                 return store;
@@ -255,19 +275,56 @@ export const useGlobalStore = () => {
     store.addSong = async (payload) => {
         const res = await api.addSongToPlaylistById(store.currentList._id, payload)
         store.setCurrentList(store.currentList._id)
-        return res.data
+        return res.data._id
     }
 
     store.removeSongById = async (id) => {
         const res = await api.removeSongFromPlaylistById(store.currentList._id, id)
         console.log(res)
         store.setCurrentList(store.currentList._id)
-        return res.data
+        return res.data.song
     }
 
     store.moveSong = async (oldIndex, newIndex) => {
+        console.log(store.currentList)
         const res = await api.moveSong(store.currentList._id, oldIndex, newIndex)
         store.setCurrentList(store.currentList._id)
+        console.log(store.currentList)
+    }
+
+    store.markSongForEditing = (song) => {
+        storeReducer({
+            type: GlobalStoreActionType.MARK_SONG_FOR_EDITING,
+            payload: song
+        })
+    }
+
+    store.unmarkSongForEditing = () => {
+        storeReducer({
+            type: GlobalStoreActionType.MARK_SONG_FOR_EDITING,
+            payload: null
+        })
+    }
+
+    store.markSongForDeletion = (song) => {
+        storeReducer({
+            type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
+            payload: song
+        })
+    }
+
+    store.unmarkSongForDeletion = (song) => {
+        storeReducer({
+            type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
+            payload: song
+        })
+    }
+
+    store.editSong = async (id, song) => {
+        const res = await api.editSongById(store.currentList._id, id, song)
+        store.unmarkSongForEditing()
+        store.setCurrentList(store.currentList._id)
+        return res.data
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT

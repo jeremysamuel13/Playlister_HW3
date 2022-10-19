@@ -1,21 +1,15 @@
 import React, { useContext, useState } from 'react'
 import { GlobalStoreContext } from '../store'
 import MoveSong_Transaction from '../transactions/MoveSong_Transaction';
-import RemoveSong_Transaction from '../transactions/RemoveSong_Transaction';
 
 function SongCard(props) {
     const { store } = useContext(GlobalStoreContext);
-    const { song, index } = props;
+    const { song, index, onDoubleClick } = props;
     const [isDragging, setIsDragging] = useState(false)
     const [draggedTo, setDraggedTo] = useState(false)
 
 
     let cardClass = "list-card unselected-list-card";
-
-    const handleRemove = () => {
-        let transaction = new RemoveSong_Transaction(store, song._id)
-        store.addTransaction(transaction)
-    }
 
     const handleDragStart = (event) => {
         event.dataTransfer.setData("song", event.target.id);
@@ -65,6 +59,7 @@ function SongCard(props) {
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            onDoubleClick={onDoubleClick}
             draggable="true"
         >
             {index + 1}.
@@ -79,7 +74,7 @@ function SongCard(props) {
                 id={"remove-song-" + index}
                 className="list-card-button"
                 value={"\u2715"}
-                onClick={handleRemove}
+                onClick={() => store.markSongForDeletion(song)}
             />
         </div>
     );

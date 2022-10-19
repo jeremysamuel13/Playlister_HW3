@@ -6,11 +6,11 @@ export default class AddSong_Transaction extends jsTPS_Transaction {
         this.payload = payload
     }
 
-    doTransaction() {
-        this.song = this.store.addSong(this.payload)
+    async doTransaction() {
+        this.songID = await this.store.addSong(this.payload)
     }
 
     undoTransaction() {
-        this.store.removeSong(this.song._id)
+        this.store.removeSongById(this.songID)
     }
 }
