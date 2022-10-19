@@ -127,9 +127,9 @@ export const useGlobalStore = () => {
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
                         async function getListPairs(playlist) {
-                            response = await api.getPlaylistPairs();
-                            if (response.data.success) {
-                                let pairsArray = response.data.idNamePairs;
+                            response = await api.getPlaylistPairs().catch(err => null);
+                            if (response?.data?.success) {
+                                let pairsArray = response?.data?.idNamePairs ?? [];
                                 storeReducer({
                                     type: GlobalStoreActionType.CHANGE_LIST_NAME,
                                     payload: {
@@ -159,9 +159,11 @@ export const useGlobalStore = () => {
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = function () {
         async function asyncLoadIdNamePairs() {
-            const response = await api.getPlaylistPairs();
-            if (response.data.success) {
-                let pairsArray = response.data.idNamePairs;
+            const response = await api.getPlaylistPairs()
+                .then(res => (res?.data ?? { success: true, idNamePairs: [] }))
+                .catch(err => ({ success: true, idNamePairs: [] }));
+            if (response.success) {
+                let pairsArray = response?.idNamePairs ?? [];
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                     payload: pairsArray
@@ -201,6 +203,10 @@ export const useGlobalStore = () => {
         tps.doTransaction();
     }
 
+    store.addTransaction = function (transaction) {
+        tps.addTransaction(transaction)
+    }
+
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
     store.setIsListNameEditActive = function () {
         storeReducer({
@@ -211,7 +217,7 @@ export const useGlobalStore = () => {
 
     store.createNewList = async () => {
         const payload = {
-            name: `Untitled ${store.newListCounter}`,
+            name: `Untitled ${store.newListCounter + 1}`,
             songs: []
         }
 
@@ -223,6 +229,7 @@ export const useGlobalStore = () => {
         })
 
         store.setCurrentList(res.data.playlist['_id'])
+        return res.data
     }
 
     store.markListForDeletion = async (playlist) => {
@@ -242,6 +249,20 @@ export const useGlobalStore = () => {
     store.deletePlaylist = async () => {
         const res = await api.deletePlaylistById(store.deleteList['_id'])
         store.loadIdNamePairs()
+        return res.data
+    }
+
+    store.addSong = async (payload) => {
+        const res = await api.addSongToPlaylistById(store.currentList._id, payload)
+        store.setCurrentList(store.currentList._id)
+        return res.data
+    }
+
+    store.removeSongById = async (id) => {
+        const res = await api.removeSongFromPlaylistById(store.currentList._id, id)
+        console.log(res)
+        store.setCurrentList(store.currentList._id)
+        return res.data
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT

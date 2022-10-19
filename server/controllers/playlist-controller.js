@@ -87,8 +87,8 @@ getPlaylistPairs = async (req, res) => {
     }).catch(err => console.log(err))
 }
 
-deletePlaylist = async (req, res) => {
-    await Playlist.findByIdAndDelete(req.params.id, (err, playlist) => {
+deletePlaylist = (req, res) => {
+    Playlist.findByIdAndDelete(req.params.id, (err, playlist) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         } else {
@@ -97,7 +97,7 @@ deletePlaylist = async (req, res) => {
     })
 }
 
-updatePlaylistById = async (req, res) => {
+updatePlaylistById = (req, res) => {
     const { body, params: { id } } = req;
 
     if (!body) {
@@ -107,7 +107,7 @@ updatePlaylistById = async (req, res) => {
         })
     }
 
-    await Playlist.findByIdAndUpdate(id, body, (err, playlist) => {
+    Playlist.findByIdAndUpdate(id, body, (err, playlist) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         } else {
@@ -116,11 +116,53 @@ updatePlaylistById = async (req, res) => {
     })
 }
 
+addSongToPlaylistById = (req, res) => {
+    const { body, params: { id } } = req;
+    console.log(req.body)
+
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a song as the body',
+        })
+    }
+
+    Playlist.findByIdAndUpdate(id, {
+        $push: {
+            songs: {
+                artist: body.artist, title: body.title, youTubeId: body.youTubeId
+            }
+        }
+    }, (err, playlist) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        } else {
+            return res.status(200).json({ success: true, playlist })
+        }
+    })
+}
+
+removeSongFromPlaylistById = (req, res) => {
+    const { playlistID, songID } = req.params;
+    console.log(req.params)
+
+    Playlist.findByIdAndUpdate(playlistID, { $pull: { songs: { _id: songID } } }, (err, playlist) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        } else {
+            return res.status(200).json({ success: true, playlist })
+        }
+    })
+
+}
+
 module.exports = {
     createPlaylist,
     getPlaylists,
     getPlaylistPairs,
     getPlaylistById,
     deletePlaylist,
-    updatePlaylistById
+    updatePlaylistById,
+    addSongToPlaylistById,
+    removeSongFromPlaylistById
 }
